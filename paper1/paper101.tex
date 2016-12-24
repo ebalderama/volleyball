@@ -380,13 +380,19 @@ This is about the statistical analysis of volleyball data. Currently, models are
   \end{cases}
 \eeq
 
-We develop a probit regression model for estimating $\rho_i = \P(Y_i = 1)$, the probability of winning point $i$, for $i \in \calD$. 
+We develop a probit regression model for estimating $\rho_i = \P(Y_i = 1)$, the probability of winning point $i$, for $i \in \calS$, where $\calS$ is the state space; the set of all possible \emph{states} of the game, or game \emph{scores}, i.e., 0-0, 1-0, 2-0, 2-1, 3-1, etc.
 
 
 \beq
   \Phi^{-1}(\Hat\rho_i) = \alpha_0 + \bbeta\bfX + Z_i,
 \eeq
-where $\alpha_0$ is an intercept term, $\bfX$ is an $n \times p$ matrix of predictors with corresponding coefficient vector $\bbeta$, and $Z_i$ is a conditional game-flow random effect that depends on $i \cond i-1, i-2, \dots$.
+where $\alpha_0$ is an intercept term, $\bfX$ is an $n \times p$ matrix of predictors with corresponding coefficient vector $\bbeta$, and $Z_i$ is a conditional ``game-flow'' random effect that depends on $i \cond i-1, i-2, \dots$. This random effect is modeled as a discrete-time dynamical system of game flow.
+
+%============================================
+\subsection{Random effect}
+%============================================
+Consider a stationary and ergodic process.
+
 
 
 \end{document}
