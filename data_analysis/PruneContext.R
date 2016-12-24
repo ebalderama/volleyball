@@ -3,12 +3,23 @@
 
 
 PruneContext <- function(y,x,cmax=NULL,K=0.3){
+
+
+
+	#=============================================
+	# Define cutoff value for pruning
+	#=============================================	
+	cutoff <- K*log(n)
+	
+	
+	#=============================================
+	# Initial values
+	#=============================================	
 	
 	if(is.null(cmax)){cmax <- MaxContext(y)}
 	context <- cmax
 	n <- length(y)
 	p <- ncol(x)
-	cutoff <- K*log(n)
 	look_further = TRUE
 	
 	while(look_further){
