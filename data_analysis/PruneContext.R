@@ -5,10 +5,10 @@
 PruneContext <- function(y,x,cmax=NULL,K=0.3){
 
 
-
 	#=============================================
 	# Define cutoff value for pruning
 	#=============================================	
+	
 	cutoff <- K*log(n)
 	
 	
@@ -22,6 +22,11 @@ PruneContext <- function(y,x,cmax=NULL,K=0.3){
 	p <- ncol(x)
 	look_further = TRUE
 	
+	
+	#=============================================
+	# Look for nodes to prune
+	#=============================================	
+
 	while(look_further){
 		prun_these_nodes = NULL
 		look_further = FALSE
@@ -50,10 +55,9 @@ PruneContext <- function(y,x,cmax=NULL,K=0.3){
 			# Compute probabilities
 			#=================================
 			
-			
 			#________________________________
 			# for context wu
-			
+			#
 			fit = glm(y[where_wu+length(wu)] ~ x_context_wu, family = "binomial")
 			nas = which(is.na(fit$coef))
 			if(length(nas)==0) p_1wu <- expit(cbind(1,x_context_wu)%*%fit$coef)
@@ -64,7 +68,7 @@ PruneContext <- function(y,x,cmax=NULL,K=0.3){
 			
 			#________________________________
 			# for context wu
-			
+			#
 			fit = glm(y[where_w+length(w)] ~ x_context_w, family = "binomial")
 			nas = which(is.na(fit$coef))
 			if(length(nas)==0) p_1w <- expit(cbind(1,x_context_w)%*%fit$coef)
