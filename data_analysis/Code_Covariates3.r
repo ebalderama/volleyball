@@ -54,6 +54,7 @@ context
 
 
 ## compare with vlmc
+vlmc(y)
 draw(vlmc(y))
 
 

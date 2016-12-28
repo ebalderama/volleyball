@@ -10,9 +10,9 @@ llike <- function(y,XB){
 
 
 LogisticMCMC <- function(y,X,
-                         iters=200,thin=1,burn=100,
-                         prior.mn=0,prior.sd=10,
-                         can.sd=0.1,
+                         iters=300,thin=1,burn=NULL,
+                         prior.mn=0,prior.sd=1,
+                         can.sd=2,
                          plot=FALSE
                          ){
 	
@@ -21,22 +21,24 @@ LogisticMCMC <- function(y,X,
     # logit(p[i]) = X%*%beta
     # beta[j]     ~ N(prior.mn,prior.sd)
     
-    X <- cbind(1,X)
-    p <- ncol(X)
     
     #==============================================
     # Initial values
     #==============================================
+    X <- cbind(1,X)
+    p <- ncol(X)
     beta <- rnorm(p,0,1)
 
-    keep.beta <- matrix(0,iters,p)
-    acc <- rep(0,p)
-    
     XB  <- X%*%beta
     XB  <- ifelse(XB>10,10,XB)
     curll <- dbinom(y,1,expit(XB),log=TRUE)
-
     
+    if(is.null(burn)) burn <- round(iters/2)
+    keep.beta <- matrix(0,iters,p)
+    acc <- rep(0,p)
+    if(plot) rows <- ceiling(sqrt(min(p,9)))
+        
+        
     #==============================================
     # Start MCMC
     #==============================================
@@ -73,8 +75,8 @@ LogisticMCMC <- function(y,X,
     	#
     	if(plot)
     	if(i%%500==0){
-    		par(mfrow=c(p,1))
-    		for(j in 1:p){plot(keep.beta[1:i,j],type="l")}
+    		par(mfrow=c(rows,rows))
+    		for(j in 1:(min(p,9))){plot(keep.beta[1:i,j],type="l")}
     	}
 
     }# End MCMC

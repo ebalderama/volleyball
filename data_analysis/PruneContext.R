@@ -58,23 +58,29 @@ PruneContext <- function(y,x,cmax=NULL,K=0.3){
 			#________________________________
 			# for context wu
 			#
-			#fit = glm(y[where_wu+length(wu)] ~ x_context_wu, family = "binomial")
-			fit <- LogisticMCMC(y[where_wu+length(wu)],x_context_wu)
+			fit = glm(y[where_wu+length(wu)] ~ x_context_wu, family = "binomial")
+			#fit <- LogisticMCMC(y[where_wu+length(wu)],x_context_wu,plot=T,iters=2000)
 			nas = which(is.na(fit$coef))
-			if(length(nas)==0) p_1wu <- expit(cbind(1,x_context_wu)%*%fit$coef)
-			else p_1wu <- expit(cbind(1,x_context_wu[,-(nas-1)])%*%fit$coef[-nas])
+			if(length(nas)==0){
+				p_1wu <- expit(cbind(1,x_context_wu)%*%fit$coef)
+			}else{
+				p_1wu <- expit(cbind(1,x_context_wu[,-(nas-1)])%*%fit$coef[-nas])
+			}
 			
 			p_0wu = 1 - p_1wu
 			
 			
 			#________________________________
-			# for context wu
+			# for context w
 			#
-			#fit = glm(y[where_w+length(w)] ~ x_context_w, family = "binomial")
-			fit <- LogisticMCMC(y[where_w+length(w)],x_context_w)
+			fit = glm(y[where_w+length(w)] ~ x_context_w, family = "binomial")
+			#fit <- LogisticMCMC(y[where_w+length(w)],x_context_w,plot=T,iters=5000)
 			nas = which(is.na(fit$coef))
-			if(length(nas)==0) p_1w <- expit(cbind(1,x_context_w)%*%fit$coef)
-			else p_1w <- expit(cbind(1,x_context_w[,-(nas-1)])%*%fit$coef[-nas])
+			if(length(nas)==0){
+				p_1w <- expit(cbind(1,x_context_w)%*%fit$coef)
+			}else{
+				p_1w <- expit(cbind(1,x_context_w[,-(nas-1)])%*%fit$coef[-nas])
+			}
 			
 			p_0w = 1 - p_1w
 			
@@ -116,10 +122,11 @@ PruneContext <- function(y,x,cmax=NULL,K=0.3){
 			b <- length(vecIn(y[-n],context[[index]]$context[-length(context[[index]]$context)]))
 			context[[index]]$prob = a/b
 		}
-		cat("length(context) =", length(context),"; duration:",(proc.time()-start.time)[1:3],"; date:")
+		cat("length(context)=", length(context),"; loop duration:",(proc.time()-start.time)[3]," sec; date: ", sep="")
 		print(Sys.time())
 	}
 	
+	cat("\nTotal time:", round((proc.time()-start.time)[3]/60,2),"minutes.")
 	return(context)
 	
 }

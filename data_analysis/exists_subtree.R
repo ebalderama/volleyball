@@ -19,3 +19,38 @@ exists_subtree <- function(context, wu)
 }
 
 
+##EXAMPLES
+if(FALSE){
+
+#> cmax[1]
+#[[1]]
+#[[1]]$context
+# [1] 0 0 1 0 0 1 0 0 0 0 0
+#
+#[[1]]$prob
+#[1] 0
+
+
+#Only subtrees beginning with the most recent (at tail of context)
+
+exists_subtree(cmax[1],c(1,0,1,0,0,1,0,0,0,0)) #TRUE
+exists_subtree(cmax[1],c(1,1,0,0,1,0,0,0,0)) #TRUE
+exists_subtree(cmax[1],c(0,0,0,1,0,0,0,0)) #TRUE
+exists_subtree(cmax[1],c(1,0,1,0,0,0,0)) #TRUE
+exists_subtree(cmax[1],c(1,1,0,0,0,0)) #TRUE
+exists_subtree(cmax[1],c(0,0,0,0,0)) #TRUE
+exists_subtree(cmax[1],c(1,0,0,0)) #TRUE
+exists_subtree(cmax[1],c(1,0,0)) #TRUE
+exists_subtree(cmax[1],c(1,0)) #TRUE
+exists_subtree(cmax[1],c(1)) #TRUE
+
+#appearing in the middle of the context is NOT a subtree
+exists_subtree(cmax[1],c(0)) #FALSE
+exists_subtree(cmax[1],c(0,0,0,0)) #FALSE
+exists_subtree(cmax[1],c(1,0,1,0,0,1)) #FALSE
+exists_subtree(cmax[1],c(0,0,0,1)) #FALSE
+
+
+}
+
+
