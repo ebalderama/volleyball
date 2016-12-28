@@ -23,7 +23,7 @@ for (i in 1:n)
      Markov_Data[i,1] = ifelse(((data$team[point_at[i]] == 1) && (data$wonlost[point_at[i]] == 1)) || ((data$team[point_at[i]] == 2) && (data$wonlost[point_at[i]] == 0)), 1, 0)
 
 
-n = 1000
+n = 100
 
 y = Markov_Data[1:n,1]
 x = Markov_Data[1:n,c(5,10)]
@@ -38,6 +38,7 @@ source("expit.R")
 source("vecIn.R")
 source("MaxContext.R")
 source("exists_subtree.R")
+source("LogisticMCMC.R")
 source("PruneContext.R")
 
 
