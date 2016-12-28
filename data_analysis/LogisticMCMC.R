@@ -10,7 +10,7 @@ llike <- function(y,XB){
 
 
 LogisticMCMC <- function(y,X,
-                         iters=1000,thin=1,burn=500,
+                         iters=200,thin=1,burn=100,
                          prior.mn=0,prior.sd=10,
                          can.sd=0.1,
                          plot=FALSE

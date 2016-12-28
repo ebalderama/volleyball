@@ -15,7 +15,7 @@ PruneContext <- function(y,x,cmax=NULL,K=0.3){
 	#=============================================
 	# Initial values
 	#=============================================	
-	
+	start.time <- proc.time()
 	if(is.null(cmax)){cmax <- MaxContext(y)}
 	context <- cmax
 	n <- length(y)
@@ -103,6 +103,7 @@ PruneContext <- function(y,x,cmax=NULL,K=0.3){
 				
 				look_further = TRUE
 			}
+			
 		}
 		
 		if(!is.null(prun_these_nodes)) context <- context[-prun_these_nodes]
@@ -115,7 +116,8 @@ PruneContext <- function(y,x,cmax=NULL,K=0.3){
 			b <- length(vecIn(y[-n],context[[index]]$context[-length(context[[index]]$context)]))
 			context[[index]]$prob = a/b
 		}
-		cat("\n length(context) = ", length(context))
+		cat("length(context) =", length(context),"; duration:",(proc.time()-start.time)[1:3],"; date:")
+		print(Sys.time())
 	}
 	
 	return(context)
