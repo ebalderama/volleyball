@@ -51,6 +51,16 @@ exists_subtree(cmax[1],c(1,0,1,0,0,1)) #FALSE
 exists_subtree(cmax[1],c(0,0,0,1)) #FALSE
 
 
+
+
+### For one path
+if(identical(tail(head(path,-1),length(subpath)),subpath)) result <- TRUE
+
+
+
+
+
+
 }
 
 

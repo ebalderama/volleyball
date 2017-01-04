@@ -58,8 +58,8 @@ PruneContext <- function(y,x,cmax=NULL,K=0.3){
 			#________________________________
 			# for context wu
 			#
-			fit = glm(y[where_wu+length(wu)] ~ x_context_wu, family = "binomial")
-			#fit <- LogisticMCMC(y[where_wu+length(wu)],x_context_wu,plot=T,iters=2000)
+			#fit = glm(y[where_wu+length(wu)] ~ x_context_wu, family = "binomial")
+			fit <- LogisticMCMC(y[where_wu+length(wu)],x_context_wu,plot=T,iters=2000)
 			nas = which(is.na(fit$coef))
 			if(length(nas)==0){
 				p_1wu <- expit(cbind(1,x_context_wu)%*%fit$coef)
@@ -73,8 +73,8 @@ PruneContext <- function(y,x,cmax=NULL,K=0.3){
 			#________________________________
 			# for context w
 			#
-			fit = glm(y[where_w+length(w)] ~ x_context_w, family = "binomial")
-			#fit <- LogisticMCMC(y[where_w+length(w)],x_context_w,plot=T,iters=5000)
+			#fit = glm(y[where_w+length(w)] ~ x_context_w, family = "binomial")
+			fit <- LogisticMCMC(y[where_w+length(w)],x_context_w,plot=T,iters=5000)
 			nas = which(is.na(fit$coef))
 			if(length(nas)==0){
 				p_1w <- expit(cbind(1,x_context_w)%*%fit$coef)
