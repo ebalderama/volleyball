@@ -36,7 +36,9 @@ source("exists_subtree2.R")
 source("LogisticMCMC.R")
 source("PruneContext2.R")
 
-context <- PruneContext(y,x,K=.15,bayesian=T,iters=100) 
+cmax <- MaxContext(y)
+
+context <- PruneContext(y,x,K=.03,bayesian=T,iters=100) 
 
 
 

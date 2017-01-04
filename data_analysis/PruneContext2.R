@@ -2,27 +2,24 @@
 
 ##version2 creates context list and prob vector separately
 
-PruneContext <- function(y,x,cmax=NULL,K=0.3,
+PruneContext <- function(y,x,context=NULL,K=0.3,
                          bayesian=FALSE,iters=300,burn=NULL,plot=FALSE){
 
 
 	#=============================================
-	# Define cutoff value for pruning
-	#=============================================	
-	
-	cutoff <- K*log(n)
-	
-	
-	#=============================================
 	# Initial values
 	#=============================================	
 	start.time <- proc.time()
-	if(is.null(cmax)){cmax <- MaxContext(y)$context}
-	context <- cmax
+	if(is.null(context)){context <- MaxContext(y)$context}
 	prob <- vector()
 	n <- length(y)
 	p <- ncol(x)
 	look_further = TRUE
+	
+	#=============================================
+	# Define cutoff value for pruning
+	#=============================================	
+	cutoff <- K*log(n)
 	
 	
 	#=============================================
