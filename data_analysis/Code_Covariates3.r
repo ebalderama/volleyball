@@ -36,10 +36,10 @@ p = length(x[1,])
 
 source("expit.R")
 source("vecIn.R")
-source("MaxContext.R")
-source("exists_subtree.R")
+source("MaxContext2.R")
+source("exists_subtree2.R")
 source("LogisticMCMC.R")
-source("PruneContext.R")
+source("PruneContext2.R")
 
 
 ## Get Max X-ary Context tree

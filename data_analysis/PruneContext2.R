@@ -1,6 +1,6 @@
 ## PRUNING
 
-
+##version2 creates context list and prob vector separately
 
 PruneContext <- function(y,x,cmax=NULL,K=0.3,
                          bayesian=FALSE,iters=300,burn=NULL,plot=FALSE){
@@ -17,8 +17,9 @@ PruneContext <- function(y,x,cmax=NULL,K=0.3,
 	# Initial values
 	#=============================================	
 	start.time <- proc.time()
-	if(is.null(cmax)){cmax <- MaxContext(y)}
+	if(is.null(cmax)){cmax <- MaxContext(y)$context}
 	context <- cmax
+	prob <- vector()
 	n <- length(y)
 	p <- ncol(x)
 	look_further = TRUE
@@ -33,8 +34,8 @@ PruneContext <- function(y,x,cmax=NULL,K=0.3,
 		look_further = FALSE
 		
 		for(index in 1:length(context))
-		if(length(context[[index]]$context) > 2){
-			wu = head(context[[index]]$context, -1)
+		if(length(context[[index]]) > 2){
+			wu = head(context[[index]], -1)
 			w = wu[-1]
 			
 			#=================================
@@ -98,11 +99,14 @@ PruneContext <- function(y,x,cmax=NULL,K=0.3,
 			p_0w = ifelse(p_0w < 0.00000001, 0, p_0w)
 			p_1w = ifelse(p_1w < 0.00000001, 0, p_1w)
 			
+			# update context probabilities
+			prob[index] <- mean(p_0wu)
+			
 			
 			#=================================
 			# Prune
 			#=================================
-
+			
 			value <- mean(p_0wu)*log(mean(p_0wu)/mean(p_0w))*n_wu
 			if(!is.finite(value)) value <- 0
 			
@@ -113,29 +117,27 @@ PruneContext <- function(y,x,cmax=NULL,K=0.3,
 				if(exists_subtree(context,wu)){
 					prun_these_nodes <- c(prun_these_nodes,index)
 				}else{
-					context[[index]]$context <- c(w,0)
+					context[[index]] <- c(w,0)
+					prob[index] <- mean(p_0w)
 				}
 				
 				look_further = TRUE
 			}
 			
+		}##end for loop
+		
+		if(!is.null(prun_these_nodes)){
+			context <- context[-prun_these_nodes]
+			prob <- prob[-prun_these_nodes]
 		}
 		
-		if(!is.null(prun_these_nodes)) context <- context[-prun_these_nodes]
-		
-		#=============================================
-		# update context probabilities
-		#=============================================
-		for(index in 1:length(context)){
-			a <- length(vecIn(y,context[[index]]$context))
-			b <- length(vecIn(y[-n],context[[index]]$context[-length(context[[index]]$context)]))
-			context[[index]]$prob = a/b
-		}
 		cat("length(context)=", length(context),"; loop duration: ",(proc.time()-start.time)[3]," sec; date: ", sep="")
 		print(Sys.time())
-	}
+		
+	}##end while loop
 	
 	cat("\nTotal time:", round((proc.time()-start.time)[3]/60,2),"minutes.\n")
-	return(context)
+	
+	return(list(context=context,prob=prob))
 	
 }
