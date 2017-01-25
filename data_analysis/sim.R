@@ -18,13 +18,13 @@ if(F){
 
 
 alphabet <- 0:1
-past1 <- c(0,1,0,1) #P(1 | 0101)
-past2 <- c(0,0,0) #P(1 | 000)
-past3 <- c(1,0,0,1,1,0) #P(1 | 10110)
+past1 <- c(0,1,0,1,0,1) #P(1 | 0101)
+past2 <- c(0,0,0,0) #P(1 | 000)
+past3 <- c(1,1,0,0,1,1) #P(1 | 110011)
 subpaths <- list(past1,past2,past3)
-p <- c(.35,.70,.60)
+p <- c(.4,.70,.3)
 
-n <- 200
+n <- 1000
 x <- matrix(1,n,1)
 y <- sim_path(alphabet,n,subpaths,p)
 
@@ -36,9 +36,8 @@ source("exists_subtree2.R")
 source("LogisticMCMC.R")
 source("PruneContext2.R")
 
-cmax <- MaxContext(y)
-
-context <- PruneContext(y,x,K=.03,bayesian=T,iters=100) 
+#cmax <- MaxContext(y)
+context <- PruneContext(y,x,K=.18,bayesian=T,iters=300) 
 
 
 
