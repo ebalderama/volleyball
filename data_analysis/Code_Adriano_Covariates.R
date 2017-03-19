@@ -339,9 +339,10 @@ PruneContext <- function(y,x,context=NULL,K=0.3,
   ################## above not used
 			
 
-			fitwu <- glm(y[where_wu+length(wu)] ~ x_context_wu, family = "binomial")
-            fitw = glm(y[where_w+length(w)] ~ x_context_w, family = "binomial")
-            if ((sum(fitw$residuals^2) - sum(fitwu$residuals^2))/(sum(fitwu$residuals^2)/length(fitwu$residuals)) < qchisq(.95, 1))
+			fitwu <- glm(y[where_wu+length(wu)] ~ x_context_wu, family = "binomial"); summary(fitwu)
+            fitw = glm(y[where_w+length(w)] ~ x_context_w, family = "binomial"); summary(fitw)
+            if(summary(fitwu)$coefficients[2,4] > .01063)
+            #if ((sum(fitw$residuals^2) - sum(fitwu$residuals^2))/(sum(fitwu$residuals^2)/length(fitwu$residuals)) < qchisq(.95, 1))
             #if (abs(fitw$deviance - fitwu$deviance) < 50)
             #if (anova(fitw, fitwu, test = "LRT")$"Pr(>Chi)"[2] > 0.05)
 			#if(value < cutoff)
@@ -455,6 +456,6 @@ y = as.numeric(sample(alphabet,start,replace=TRUE))
 	}
    
 
-PruneContext(y,as.matrix(Z))
-
+a=PruneContext(y,as.matrix(Z))
+a
 
