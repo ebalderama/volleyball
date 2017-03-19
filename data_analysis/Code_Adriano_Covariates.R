@@ -20,6 +20,7 @@ vecIn <- function(a,b){
 ##########################################################################################################################
 ## 1. Fit a maximal |X|-ary context tree: search for the context function c_max() with the biggest tree such that every element is observed at least twice in the data.
 #alphabet = c(0,1)
+## Return example: 0100, where 010 is the context and 0 is the response (only response 0 is returned)
 ##version2 creates context list and prob vector separately
 MaxContext <- function(y,alphabet=c(0,1)){
 	
@@ -184,7 +185,7 @@ LogisticMCMC <- function(y,X,
 ## Exists Subtree
 ##########################################################################################################################
 ## checks if there is a context like this one starting with the opposite number
-## Ex: 01011: is there a context 11011?
+## Ex: 01011: is there a context 11011? Basically testing if the there is another final node. Note that the seq is inverted, and 1 is the response from the context 0101
 # the goal of this function is to: if false we will delete the node 01011 and create 1011; if true we will just delete 01011
 ##version2 creates context list and prob vector separately
 
@@ -272,6 +273,12 @@ PruneContext <- function(y,x,context=NULL,K=0.3,
 			# Compute probabilities
 			#=================================
 			
+
+  ##################
+  ## I will not use this part!!!!!!!!
+  
+  if (FALSE)
+  {
 			#________________________________
 			# for context wu
 			#
@@ -328,17 +335,30 @@ PruneContext <- function(y,x,context=NULL,K=0.3,
 			value2 <- mean(p_1wu)*log(mean(p_1wu)/mean(p_1w))*n_wu
 			if(is.finite(value2)) value <- value + value2
 			
-			if(value < cutoff){
-				if(exists_subtree(context,wu)){
+		}
+  ################## above not used
+			
+
+			fitwu <- glm(y[where_wu+length(wu)] ~ x_context_wu, family = "binomial")
+            fitw = glm(y[where_w+length(w)] ~ x_context_w, family = "binomial")
+            if ((sum(fitw$residuals^2) - sum(fitwu$residuals^2))/(sum(fitwu$residuals^2)/length(fitwu$residuals)) < qchisq(.95, 1))
+            #if (abs(fitw$deviance - fitwu$deviance) < 50)
+            #if (anova(fitw, fitwu, test = "LRT")$"Pr(>Chi)"[2] > 0.05)
+			#if(value < cutoff)
+			{
+				if(exists_subtree(context,wu))
+				{
 					prun_these_nodes <- c(prun_these_nodes,index)
-				}else{
+				}else
+				{
 					context[[index]] <- c(w,0)
-					prob[index] <- mean(p_0w)
+					#prob[index] <- mean(p_0w)
 				}
 				
 				look_further = TRUE
 			}
-			
+
+
 		}##end for loop
 		
 		if(!is.null(prun_these_nodes)){
@@ -365,36 +385,73 @@ PruneContext <- function(y,x,context=NULL,K=0.3,
 
 
 alphabet <- 0:1
-past1 <- c(0,1,0,1) #P(1 | 0101)
-past2 <- c(0,0,0) #P(1 | 000)
-past3 <- c(1,0,0,1,1,0) #P(1 | 10110)
+past1 <- c(0,0,1,0) #P(1 | 0100) - careful with the order: from past to present 0010u
+past2 <- c(1,0,1,0) #P(1 | 0101)
+past3 <- c(0,1) #P(1 | 10)
 subpaths <- list(past1,past2,past3)
 
+### these paths give the context tree
+#                x
+#            0       1
+#              1    0
+#             0
+#            0 1 
+##
+## Note that we have several final nodes: 0 is a final node if we have 00; 01 is a final node if we have 011;...
+
 # NOTE that the length of each vector is nodes+1, where the first element is the parameter Beta_0
-beta1 = c(1,1,2,3,4)
-beta2 = c(0,0,1,1)
-beta3 = c(-1,-2,-1,1,1,1,-3)
-betas = list(beta1, beta2, beta3)
+
+## for final node 0[0] - the beta is actually only beta_0 + beta1 corresponding to the 0 context. the Brackets [0] means that we dont have to look there, but we do have to look at 10. The length of each beta is 1(beta_0) + betas of the context 
+beta0 = c(1,2)
+## for final node 01[1]
+beta01 = c(2.5,3,1)
+## for final node 0100
+beta0100 = c(-1,-2,-1,1,1.5)
+## for final node 0101
+beta0101 = c(1,3,-2,.5,2.5)
+## for final node 1[1]
+beta10 = c(-2.5,2)
+## for final node 10
+beta1 = c(2,-3)
+
 
 ## path = vlmc
 
 
 n = 1000
 
-y = as.numeric(sample(alphabet,n,replace=TRUE))
+#y = as.numeric(sample(alphabet,n,replace=TRUE))
 
 
 # Z is the covariate
 Z = rnorm(n) 
-start <- min(unlist(lapply(subpaths,length)))+1
+#start <- min(unlist(lapply(subpaths,length)))+1
+start <- max(unlist(lapply(subpaths,length)))+1
+y = as.numeric(sample(alphabet,start,replace=TRUE))
+
 	for(i in start:n)
 	{
-		if (!is.na(s <- Position(function(x) identical(x,tail(y[1:(i-1)],length(x))), subpaths)))
-		{
-			prob = expit(as.numeric(betas[[s]]%*%c(1,Z[(i-length(betas[[s]])+1):(i-1)]))) ## c(1,Z) is to account for beta_0
-			y[i] = sample(alphabet,1,prob=c(1-prob,prob))
-			#cat("\n i = ", i, " prob = ", prob)
-		}
+		#if (!is.na(s <- Position(function(x) identical(x,tail(y[1:(i-1)],length(x))), subpaths)))
+		#{
+		#	prob = expit(as.numeric(betas[[s]]%*%c(1,Z[(i-length(betas[[s]])+1):(i-1)]))) ## c(1,Z) is to account for beta_0
+		#	y[i] = sample(alphabet,1,prob=c(1-prob,prob))
+		#	#cat("\n i = ", i, " prob = ", prob)
+		#}
+		if (identical(y[(i-4):(i-1)], c(0,0,1,0)))
+   			prob = expit(as.numeric(beta0100%*%c(1,Z[(i-length(beta0100)+1):(i-1)]))) ## c(1,Z) is to account for beta_0
+		else if (identical(y[(i-4):(i-1)], c(1,0,1,0)))
+   			prob = expit(as.numeric(beta0101%*%c(1,Z[(i-length(beta0101)+1):(i-1)]))) ## c(1,Z) is to account for beta_0
+		else if (identical(y[(i-3):(i-1)], c(1,1,0)))
+   			prob = expit(as.numeric(beta01%*%c(1,Z[(i-length(beta01)+1):(i-1)]))) ## c(1,Z) is to account for beta_0
+		else if (identical(y[(i-2):(i-1)], c(0,0)))
+   			prob = expit(as.numeric(beta0%*%c(1,Z[(i-length(beta0)+1):(i-1)]))) ## c(1,Z) is to account for beta_0
+		else if (identical(y[(i-2):(i-1)], c(0,1)))
+   			prob = expit(as.numeric(beta10%*%c(1,Z[(i-length(beta10)+1):(i-1)]))) ## c(1,Z) is to account for beta_0
+		else if (identical(y[(i-2):(i-1)], c(1,1)))
+   			prob = expit(as.numeric(beta1%*%c(1,Z[(i-length(beta1)+1):(i-1)]))) ## c(1,Z) is to account for beta_0
+		else prob = 0.5
+
+		y[i] = sample(alphabet,1,prob=c(1-prob,prob))
 	}
    
 
