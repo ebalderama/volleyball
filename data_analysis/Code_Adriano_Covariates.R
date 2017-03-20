@@ -411,9 +411,9 @@ beta0100 = c(-1,-2,-1,1,1.5)
 ## for final node 0101
 beta0101 = c(1,3,-2,.5,2.5)
 ## for final node 1[1]
-beta10 = c(-2.5,2)
+beta1 = c(-2.5,2)
 ## for final node 10
-beta1 = c(2,-3)
+beta10 = c(2,-3, 4)
 
 
 ## path = vlmc
